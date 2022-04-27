@@ -1,10 +1,7 @@
 //> Scanning scanner-class
 package com.craftinginterpreters.lox;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.craftinginterpreters.lox.TokenType.*; // [static-import]
 
@@ -39,6 +36,8 @@ class Scanner {
   private int current = 0;
   private int line = 1;
 //< scan-state
+
+  private final Stack<Integer> nestingBlockComments = new Stack<>();
 
   Scanner(String source) {
     this.source = source;
@@ -88,6 +87,8 @@ class Scanner {
         if (match('/')) {
           // A comment goes until the end of the line.
           while (peek() != '\n' && !isAtEnd()) advance();
+        } else if (match('*')){
+          blockComment();
         } else {
           addToken(SLASH);
         }
@@ -130,6 +131,37 @@ class Scanner {
 //< char-error
     }
   }
+
+  private void blockComment(){
+    nestingBlockComments.push(1);
+
+    boolean tailFound = false;
+
+    while(!isAtEnd()){
+      char c = advance();
+      if (c == '\n'){
+        line++;
+      } else if(c == '/') {
+        if (match('*')){
+          nestingBlockComments.push(1);
+        }
+      } else if(c == '*'){
+        if (match('/')){
+          nestingBlockComments.pop();
+          if (nestingBlockComments.isEmpty()){
+            tailFound = true;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!tailFound || !nestingBlockComments.isEmpty()) {
+      Lox.error(line,"Unterminated comment");
+    }
+    nestingBlockComments.clear();
+  }
+
 //< scan-token
 //> identifier
   private void identifier() {

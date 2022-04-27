@@ -16,3 +16,6 @@ xcuserdata/
 # Dart stuff.
 /tool/.dart_tool/
 /tool/.packages
+/out
+.DS_Store
+*.iml
