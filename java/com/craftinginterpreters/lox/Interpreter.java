@@ -52,7 +52,7 @@ class Interpreter implements Expr.Visitor<Object>,
   }
   
 //< Functions interpreter-constructor
-/* Evaluating Expressions interpret < Statements and State interpret
+  // Evaluating Expressions interpret < Statements and State interpret
   void interpret(Expr expression) { // [void]
     try {
       Object value = evaluate(expression);
@@ -61,7 +61,7 @@ class Interpreter implements Expr.Visitor<Object>,
       Lox.runtimeError(error);
     }
   }
-*/
+
 //> Statements and State interpret
   void interpret(List<Stmt> statements) {
     try {
