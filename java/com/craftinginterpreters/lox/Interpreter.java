@@ -329,7 +329,12 @@ class Interpreter implements Expr.Visitor<Object>,
 //> check-slash-operand
         checkNumberOperands(expr.operator, left, right);
 //< check-slash-operand
-        return (double)left / (double)right;
+        Double r = (Double) left / (Double)right;
+        if (r.isInfinite() || r.isNaN()){
+          throw new RuntimeError(expr.operator,
+                  String.format("%f divided by zero.", left));
+        }
+        return r;
       case STAR:
 //> check-star-operand
         checkNumberOperands(expr.operator, left, right);

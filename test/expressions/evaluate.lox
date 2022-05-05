@@ -2,5 +2,5 @@
 // expression directly.
 // (5 - (3 - 1)) + -1
 // 4 + "scone"
-"scone" + 4
+1/0
 // expect: 2
