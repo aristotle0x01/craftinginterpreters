@@ -309,6 +309,14 @@ class Interpreter implements Expr.Visitor<Object>,
           return (String)left + (String)right;
         }
 
+        if (left instanceof String && right instanceof Double) {
+          return (String)left + fmt((Double) right);
+        }
+
+        if (left instanceof Double && right instanceof String) {
+          return fmt((Double) left) + (String)right;
+        }
+
 /* Evaluating Expressions binary-plus < Evaluating Expressions string-wrong-type
         break;
 */
@@ -332,6 +340,15 @@ class Interpreter implements Expr.Visitor<Object>,
     // Unreachable.
     return null;
   }
+
+  public static String fmt(Double d)
+  {
+    if (d % 1.0 != 0)
+      return String.format("%s", d);
+    else
+      return String.format("%.0f", d);
+  }
+
 //< visit-binary
 //> Functions visit-call
   @Override
