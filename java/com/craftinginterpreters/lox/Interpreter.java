@@ -226,9 +226,10 @@ class Interpreter implements Expr.Visitor<Object>,
     Object value = null;
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer);
+      environment.define(stmt.name.lexeme, value);
+    } else{
+      environment.define2(stmt.name.lexeme, null);
     }
-
-    environment.define(stmt.name.lexeme, value);
     return null;
   }
 //< Statements and State visit-var
