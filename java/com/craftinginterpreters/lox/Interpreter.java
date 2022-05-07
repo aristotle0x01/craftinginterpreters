@@ -472,11 +472,11 @@ class Interpreter implements Expr.Visitor<Object>,
 //> Statements and State visit-variable
   @Override
   public Object visitVariableExpr(Expr.Variable expr) {
-/* Statements and State visit-variable < Resolving and Binding call-look-up-variable
+    // Statements and State visit-variable < Resolving and Binding call-look-up-variable
     return environment.get(expr.name);
-*/
+
 //> Resolving and Binding call-look-up-variable
-    return lookUpVariable(expr.name, expr);
+//    return lookUpVariable(expr.name, expr);
 //< Resolving and Binding call-look-up-variable
   }
 //> Resolving and Binding look-up-variable
