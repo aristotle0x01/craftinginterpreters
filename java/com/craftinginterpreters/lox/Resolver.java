@@ -212,6 +212,12 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     return null;
   }
 //< visit-while-stmt
+//> visit-break-stmt
+@Override
+public Void visitBreakStmt(Stmt.Break stmt) {
+  return null;
+}
+//< visit-break-stmt
 //> visit-assign-expr
   @Override
   public Void visitAssignExpr(Expr.Assign expr) {
