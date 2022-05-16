@@ -1,15 +1,13 @@
 //> Resolving and Binding resolver
 package com.craftinginterpreters.lox;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
   private final Interpreter interpreter;
 //> scopes-field
   private final Stack<Map<String, Boolean>> scopes = new Stack<>();
+  private final Map<String, Token> perScopeLocallyUnResolved = new HashMap<>();
 //< scopes-field
 //> function-type-field
   private FunctionType currentFunction = FunctionType.NONE;
@@ -371,11 +369,17 @@ public Void visitBreakStmt(Stmt.Break stmt) {
 //> begin-scope
   private void beginScope() {
     scopes.push(new HashMap<String, Boolean>());
+    perScopeLocallyUnResolved.clear();
   }
 //< begin-scope
 //> end-scope
   private void endScope() {
     scopes.pop();
+    for (Token token : perScopeLocallyUnResolved.values()) {
+      Lox.error(token,
+              "Variable is never used in this scope.");
+    }
+    perScopeLocallyUnResolved.clear();
   }
 //< end-scope
 //> declare
@@ -397,6 +401,7 @@ public Void visitBreakStmt(Stmt.Break stmt) {
   private void define(Token name) {
     if (scopes.isEmpty()) return;
     scopes.peek().put(name.lexeme, true);
+    perScopeLocallyUnResolved.put(name.lexeme, name);
   }
 //< define
 //> resolve-local
@@ -404,6 +409,7 @@ public Void visitBreakStmt(Stmt.Break stmt) {
     for (int i = scopes.size() - 1; i >= 0; i--) {
       if (scopes.get(i).containsKey(name.lexeme)) {
         interpreter.resolve(expr, scopes.size() - 1 - i);
+        perScopeLocallyUnResolved.remove(name.lexeme);
         return;
       }
     }
