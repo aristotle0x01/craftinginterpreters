@@ -6,7 +6,7 @@
     }
     ```
 
-    The function does call itself inside it's definition. But it relies on some
+    The function does call itself inside its definition. But it relies on some
     initial outer call to kick off the recursion. Some outside code must refer
     to "foo" by name first. That can't happen until the function declaration
     statement itself has finished executing. By then, "foo" is fully defined
