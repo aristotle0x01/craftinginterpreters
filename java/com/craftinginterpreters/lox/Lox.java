@@ -85,8 +85,8 @@ public class Lox {
 
 //< Parsing Expressions print-ast
 //> Resolving and Binding create-resolver
-//    Resolver resolver = new Resolver(interpreter);
-//    resolver.resolve(statements);
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
 //> resolution-error
 
     // Stop if there was a resolution error.
