@@ -26,15 +26,15 @@ class Parser {
   Parser(List<Token> tokens) {
     this.tokens = tokens;
   }
-/* Parsing Expressions parse < Statements and State parse
-  Expr parse() {
+  // Parsing Expressions parse < Statements and State parse
+  Expr parseEp7() {
     try {
       return expression();
     } catch (ParseError error) {
       return null;
     }
   }
-*/
+
 //> Statements and State parse
   List<Stmt> parse() {
     List<Stmt> statements = new ArrayList<>();
@@ -52,11 +52,10 @@ class Parser {
 //< Statements and State parse
 //> expression
   private Expr expression() {
-/* Parsing Expressions expression < Statements and State expression
+    // Parsing Expressions expression < Statements and State expression
     return equality();
-*/
 //> Statements and State expression
-    return assignment();
+    // return assignment();
 //< Statements and State expression
   }
 //< expression
@@ -430,11 +429,10 @@ class Parser {
       return new Expr.Unary(operator, right);
     }
 
-/* Parsing Expressions unary < Functions unary-call
+    // Parsing Expressions unary < Functions unary-call
     return primary();
-*/
 //> Functions unary-call
-    return call();
+    // return call();
 //< Functions unary-call
   }
 //< unary

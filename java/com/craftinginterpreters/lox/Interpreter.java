@@ -52,7 +52,7 @@ class Interpreter implements Expr.Visitor<Object>,
   }
   
 //< Functions interpreter-constructor
-/* Evaluating Expressions interpret < Statements and State interpret
+  // Evaluating Expressions interpret < Statements and State interpret
   void interpret(Expr expression) { // [void]
     try {
       Object value = evaluate(expression);
@@ -61,7 +61,7 @@ class Interpreter implements Expr.Visitor<Object>,
       Lox.runtimeError(error);
     }
   }
-*/
+
 //> Statements and State interpret
   void interpret(List<Stmt> statements) {
     try {
@@ -321,6 +321,14 @@ class Interpreter implements Expr.Visitor<Object>,
           return (String)left + (String)right;
         }
 
+        if (left instanceof String && right instanceof Double) {
+          return (String)left + fmt((Double) right);
+        }
+
+        if (left instanceof Double && right instanceof String) {
+          return fmt((Double) left) + (String)right;
+        }
+
 /* Evaluating Expressions binary-plus < Evaluating Expressions string-wrong-type
         break;
 */
@@ -333,7 +341,12 @@ class Interpreter implements Expr.Visitor<Object>,
 //> check-slash-operand
         checkNumberOperands(expr.operator, left, right);
 //< check-slash-operand
-        return (double)left / (double)right;
+        Double r = (Double) left / (Double)right;
+        if (r.isInfinite() || r.isNaN()){
+          throw new RuntimeError(expr.operator,
+                  String.format("%f divided by zero.", left));
+        }
+        return r;
       case STAR:
 //> check-star-operand
         checkNumberOperands(expr.operator, left, right);
@@ -344,6 +357,15 @@ class Interpreter implements Expr.Visitor<Object>,
     // Unreachable.
     return null;
   }
+
+  public static String fmt(Double d)
+  {
+    if (d % 1.0 != 0)
+      return String.format("%s", d);
+    else
+      return String.format("%.0f", d);
+  }
+
 //< visit-binary
 //> Functions visit-call
   @Override
