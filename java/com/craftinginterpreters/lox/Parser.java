@@ -289,24 +289,30 @@ class Parser {
       ft = Resolver.FunctionType.METHOD;
     }
     Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
-//> parse-parameters
-    consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
     List<Token> parameters = new ArrayList<>();
-    if (!check(RIGHT_PAREN)) {
-      do {
-        if (parameters.size() >= 255) {
-          error(peek(), "Can't have more than 255 parameters.");
-        }
+    if (check(LEFT_BRACE)) {
+      ft = Resolver.FunctionType.GETTER;
+      consume(LEFT_BRACE, "Expect '{' before getter body.");
+    } else {
+//> parse-parameters
+      consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
+      if (!check(RIGHT_PAREN)) {
+        do {
+          if (parameters.size() >= 255) {
+            error(peek(), "Can't have more than 255 parameters.");
+          }
 
-        parameters.add(
-            consume(IDENTIFIER, "Expect parameter name."));
-      } while (match(COMMA));
-    }
-    consume(RIGHT_PAREN, "Expect ')' after parameters.");
+          parameters.add(
+                  consume(IDENTIFIER, "Expect parameter name."));
+        } while (match(COMMA));
+      }
+      consume(RIGHT_PAREN, "Expect ')' after parameters.");
+
+      consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
 //< parse-parameters
+    }
 //> parse-body
 
-    consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
     List<Stmt> body = block();
     return new Stmt.Function(name, parameters, body, ft);
 //< parse-body

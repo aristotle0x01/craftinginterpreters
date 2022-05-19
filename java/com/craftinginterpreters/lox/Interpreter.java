@@ -12,6 +12,8 @@ import java.util.List;
 //< Statements and State import-list
 //> Resolving and Binding import-map
 import java.util.Map;
+
+import static com.craftinginterpreters.lox.TokenType.IDENTIFIER;
 //< Resolving and Binding import-map
 
 /* Evaluating Expressions interpreter-class < Statements and State interpreter
@@ -401,7 +403,14 @@ class Interpreter implements Expr.Visitor<Object>,
   public Object visitGetExpr(Expr.Get expr) {
     Object object = evaluate(expr.object);
     if (object instanceof LoxInstance) {
-      return ((LoxInstance) object).get(expr.name);
+      Object obj = ((LoxInstance) object).get(expr.name);
+      if (obj instanceof LoxFunction) {
+        LoxFunction getter = (LoxFunction)obj;
+        if (getter.getType() == Resolver.FunctionType.GETTER) {
+          return getter.call(this, new ArrayList<>());
+        }
+      }
+      return obj;
     }
     if (object instanceof LoxClass) {
       return ((LoxClass) object).get(expr.name);

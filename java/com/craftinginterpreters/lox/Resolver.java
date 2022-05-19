@@ -29,7 +29,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 //< function-type-initializer
     METHOD,
 //< Classes function-type-method
-    STATIC_METHOD
+    STATIC_METHOD,
+    GETTER
   }
 //< function-type
 //> Classes class-type
