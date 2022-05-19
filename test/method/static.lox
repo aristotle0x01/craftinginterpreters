@@ -1,0 +1,15 @@
+class Math {
+  inFoo() {
+      print "in foo";
+    }
+
+    class square(n) {
+        return n * n;
+      }
+}
+
+class Math1 < Math {
+}
+print Math.square(3); // Prints "9".
+print Math1.square(3);
+Math().inFoo();

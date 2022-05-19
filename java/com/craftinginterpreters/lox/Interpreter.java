@@ -403,6 +403,9 @@ class Interpreter implements Expr.Visitor<Object>,
     if (object instanceof LoxInstance) {
       return ((LoxInstance) object).get(expr.name);
     }
+    if (object instanceof LoxClass) {
+      return ((LoxClass) object).get(expr.name);
+    }
 
     throw new RuntimeError(expr.name,
         "Only instances have properties.");

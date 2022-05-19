@@ -88,4 +88,8 @@ class LoxFunction implements LoxCallable {
     return null;
   }
 //< function-call
+
+  public Resolver.FunctionType getType(){
+    return declaration.type;
+  }
 }

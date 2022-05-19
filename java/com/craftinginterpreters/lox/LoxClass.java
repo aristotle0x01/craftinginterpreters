@@ -82,4 +82,20 @@ class LoxClass implements LoxCallable {
 //< lox-initializer-arity
   }
 //< lox-class-call-arity
+
+  Object get(Token name) {
+    for(String m: methods.keySet()){
+      LoxFunction lf = methods.get(m);
+      if (lf.getType() == Resolver.FunctionType.STATIC_METHOD && m.equals(name.lexeme)) {
+        return lf;
+      }
+    }
+
+    if (this.superclass != null) {
+      return this.superclass.get(name);
+    }
+
+    throw new RuntimeError(name,
+            "Undefined method '" + name.lexeme + "'.");
+  }
 }

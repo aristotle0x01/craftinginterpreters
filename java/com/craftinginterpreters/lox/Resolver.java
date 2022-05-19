@@ -17,7 +17,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     this.interpreter = interpreter;
   }
 //> function-type
-  private enum FunctionType {
+  public enum FunctionType {
     NONE,
 /* Resolving and Binding function-type < Classes function-type-method
     FUNCTION
@@ -27,8 +27,9 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 //> function-type-initializer
     INITIALIZER,
 //< function-type-initializer
-    METHOD
+    METHOD,
 //< Classes function-type-method
+    STATIC_METHOD
   }
 //< function-type
 //> Classes class-type

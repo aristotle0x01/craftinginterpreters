@@ -68,10 +68,11 @@ abstract class Stmt {
 //< stmt-expression
 //> stmt-function
   static class Function extends Stmt {
-    Function(Token name, List<Token> params, List<Stmt> body) {
+    Function(Token name, List<Token> params, List<Stmt> body, Resolver.FunctionType type) {
       this.name = name;
       this.params = params;
       this.body = body;
+      this.type = type;
     }
 
     @Override
@@ -82,6 +83,7 @@ abstract class Stmt {
     final Token name;
     final List<Token> params;
     final List<Stmt> body;
+    final Resolver.FunctionType type;
   }
 //< stmt-function
 //> stmt-if

@@ -279,6 +279,15 @@ class Parser {
 //< Statements and State parse-expression-statement
 //> Functions parse-function
   private Stmt.Function function(String kind) {
+    Resolver.FunctionType ft;
+    if (check(CLASS)) {
+      ft = Resolver.FunctionType.STATIC_METHOD;
+      consume(CLASS, "Expect preceding 'class' keyword of static method");
+    } else if ("function".equals(kind)) {
+      ft = Resolver.FunctionType.FUNCTION;
+    } else {
+      ft = Resolver.FunctionType.METHOD;
+    }
     Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
 //> parse-parameters
     consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
@@ -299,7 +308,7 @@ class Parser {
 
     consume(LEFT_BRACE, "Expect '{' before " + kind + " body.");
     List<Stmt> body = block();
-    return new Stmt.Function(name, parameters, body);
+    return new Stmt.Function(name, parameters, body, ft);
 //< parse-body
   }
 //< Functions parse-function
