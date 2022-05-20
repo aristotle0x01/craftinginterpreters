@@ -213,6 +213,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   public String visitVariableExpr(Expr.Variable expr) {
     return expr.name.lexeme;
   }
+
+  @Override
+  public String visitLambdaExpr(Expr.Lambda expr){
+    return parenthesize2("lambda", expr.function, expr.paren);
+  }
 //< Statements and State omit
 //< visit-methods
 //> print-utilities

@@ -533,6 +533,12 @@ class Interpreter implements Expr.Visitor<Object>,
       return globals.get(name);
     }
   }
+
+  @Override
+  public Object visitLambdaExpr(Expr.Lambda expr){
+    LoxFunction function = new LoxFunction(expr.function, environment, false);
+    return function;
+  }
 //< Resolving and Binding look-up-variable
 //< Statements and State visit-variable
 //> check-operand

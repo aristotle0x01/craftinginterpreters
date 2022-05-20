@@ -278,6 +278,7 @@ class Parser {
   }
 //< Statements and State parse-expression-statement
 //> Functions parse-function
+  private int lambdaCounter = 0;
   private Stmt.Function function(String kind) {
     Resolver.FunctionType ft;
     if (check(CLASS)) {
@@ -285,10 +286,18 @@ class Parser {
       consume(CLASS, "Expect preceding 'class' keyword of static method");
     } else if ("function".equals(kind)) {
       ft = Resolver.FunctionType.FUNCTION;
+    } else if ("lambda".equals(kind)) {
+      ft = Resolver.FunctionType.LAMBDA;
     } else {
       ft = Resolver.FunctionType.METHOD;
     }
-    Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    Token name;
+    if (ft == Resolver.FunctionType.LAMBDA) {
+      lambdaCounter++;
+      name = new Token(IDENTIFIER, "lambda_fun?_" + lambdaCounter, null, previous().line);
+    } else{
+      name = consume(IDENTIFIER, "Expect " + kind + " name.");
+    }
     List<Token> parameters = new ArrayList<>();
     if (check(LEFT_BRACE)) {
       ft = Resolver.FunctionType.GETTER;
@@ -463,7 +472,13 @@ class Parser {
           error(peek(), "Can't have more than 255 arguments.");
         }
 //< check-max-arity
-        arguments.add(expression());
+        // support lambda
+        if (match(FUN)) {
+          Stmt.Function f = function("lambda");
+          arguments.add(new Expr.Lambda(peek(), f));
+        } else {
+          arguments.add(expression());
+        }
       } while (match(COMMA));
     }
 

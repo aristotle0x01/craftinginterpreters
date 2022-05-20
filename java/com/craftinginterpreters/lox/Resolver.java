@@ -30,7 +30,8 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
     METHOD,
 //< Classes function-type-method
     STATIC_METHOD,
-    GETTER
+    GETTER,
+    LAMBDA
   }
 //< function-type
 //> Classes class-type
@@ -335,6 +336,11 @@ public Void visitBreakStmt(Stmt.Break stmt) {
     return null;
   }
 //< visit-variable-expr
+  @Override
+  public Void visitLambdaExpr(Expr.Lambda expr){
+    visitFunctionStmt(expr.function);
+    return null;
+  }
 //> resolve-stmt
   private void resolve(Stmt stmt) {
     stmt.accept(this);
