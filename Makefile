@@ -3,7 +3,7 @@ TOOL_SOURCES := tool/pubspec.lock $(shell find tool -name '*.dart')
 BUILD_SNAPSHOT := $(BUILD_DIR)/build.dart.snapshot
 TEST_SNAPSHOT := $(BUILD_DIR)/test.dart.snapshot
 
-default: book clox jlox
+default: book clox jlox lox
 
 # Run dart pub get on tool directory.
 get:
@@ -36,6 +36,10 @@ test: debug jlox $(TEST_SNAPSHOT)
 test_clox: debug $(TEST_SNAPSHOT)
 	@ dart $(TEST_SNAPSHOT) clox
 
+# Run the tests for the final version of lox.
+test_lox: debug $(TEST_SNAPSHOT)
+	@ dart $(TEST_SNAPSHOT) lox
+
 # Run the tests for the final version of jlox.
 test_jlox: jlox $(TEST_SNAPSHOT)
 	@ dart $(TEST_SNAPSHOT) jlox
@@ -65,6 +69,11 @@ debug:
 clox:
 	@ $(MAKE) -f util/c.make NAME=clox MODE=release SOURCE_DIR=c
 	@ cp build/clox clox # For convenience, copy the interpreter to the top level.
+
+# Compile the C interpreter.
+lox:
+	@ $(MAKE) -f util/c.make NAME=lox MODE=release SOURCE_DIR=vm
+	@ cp build/lox lox # For convenience, copy the interpreter to the top level.
 
 # Compile the C interpreter as ANSI standard C++.
 cpplox:
@@ -202,5 +211,5 @@ compile_snippets:
 xml: $(TOOL_SOURCES)
 	@ dart --enable-asserts tool/bin/build_xml.dart
 
-.PHONY: book c_chapters clean clox compile_snippets debug default diffs \
+.PHONY: book c_chapters clean clox lox compile_snippets debug default diffs \
 	get java_chapters jlox serve split_chapters test test_all test_c test_java
