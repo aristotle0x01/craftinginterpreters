@@ -146,6 +146,12 @@ $ make java_chapters
 This compiles the Java code to classfiles in `build/gen/` in a subdirectory for
 each chapter.
 
+for the chapter by chapter accumulating build-up of clox, here it is in folder '/vm':
+
+```sh
+$ make lox "SNIPPET=true"
+```
+
 ## Testing
 
 I have a full Lox test suite that I use to ensure the interpreters in the book
