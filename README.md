@@ -146,6 +146,8 @@ $ make java_chapters
 This compiles the Java code to classfiles in `build/gen/` in a subdirectory for
 each chapter.
 
+### your build up
+
 for the chapter by chapter accumulating build-up of clox, here it is in folder '/vm':
 
 ```sh
