@@ -1,6 +1,8 @@
 #ifndef clox_object_h
 #define clox_object_h
 
+// #define FLEXIBLE_ARRAY_MEMBER
+
 #include <stdio.h>
 
 #include "common.h"
@@ -22,11 +24,19 @@ struct Obj {
   struct Obj* next;
 };
 
-struct ObjString {
-  Obj obj;
-  int length;
-  char* chars;
-};
+#ifdef FLEXIBLE_ARRAY_MEMBER
+    struct ObjString {
+        Obj obj;
+        int length;
+        char chars[];
+    };
+#else
+    struct ObjString {
+        Obj obj;
+        int length;
+        char* chars;
+    };
+#endif
 
 ObjString* takeString(char* chars, int length);
 ObjString* copyString(const char* chars, int length);
