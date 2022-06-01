@@ -28,6 +28,7 @@ struct Obj {
     struct ObjString {
         Obj obj;
         int length;
+        uint32_t hash;
         char chars[];
     };
 #else
@@ -35,6 +36,7 @@ struct Obj {
         Obj obj;
         int length;
         char* chars;
+        uint32_t hash;
     };
 #endif
 
