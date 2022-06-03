@@ -40,6 +40,7 @@ typedef struct {
 
 Parser parser;
 Chunk* compilingChunk;
+Table globalVarNameConstIndexMap;
 
 static Chunk* currentChunk() {
   return compilingChunk;
@@ -187,8 +188,16 @@ static void string(bool canAssign) {
 }
 
 static uint8_t identifierConstant(Token* name) {
-  return makeConstant(OBJ_VAL(copyString(name->start,
-                                         name->length)));
+  ObjString* key = copyString(name->start, name->length);
+
+  Value value;
+  if (tableGet(&globalVarNameConstIndexMap, key, &value)) {
+    return (uint8_t)AS_NUMBER(value);
+  } else {
+    uint8_t index = makeConstant(OBJ_VAL(key));
+    tableSet(&globalVarNameConstIndexMap, key, NUMBER_VAL(index));
+    return index;
+  }
 }
 
 static void namedVariable(Token name, bool canAssign) {
@@ -370,6 +379,8 @@ static void statement() {
 }
 
 bool compile(const char* source, Chunk* chunk) {
+  initTable(&globalVarNameConstIndexMap);
+
   initScanner(source);
   compilingChunk = chunk;
 
@@ -381,6 +392,8 @@ bool compile(const char* source, Chunk* chunk) {
   while (!match(TOKEN_EOF)) {
     declaration();
   }
+
+  freeTable(&globalVarNameConstIndexMap);
 
   endCompiler();
   return !parser.hadError;

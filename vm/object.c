@@ -82,7 +82,6 @@ static uint32_t hashString(const char* key, int length) {
         ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
         if (interned != NULL) return interned;
 
-        // printf("size of ObjString %lu, %lu, %lu, %lu\n", sizeof(ObjString), sizeof(int), sizeof(ObjType), sizeof(Obj));
         char* heapChars = ALLOCATE(char, length + 1);
         memcpy(heapChars, chars, length);
         heapChars[length] = '\0';
