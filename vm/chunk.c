@@ -59,6 +59,9 @@ void writeConstant(Chunk* chunk, Value value, int line) {
         chunk->lines[chunk->count] = line;
         chunk->count++;
     } else {
+        printf("********** large constant error found!\n");
+        exit(1);
+
         chunk->code[chunk->count] = OP_CONSTANT_LONG;
         chunk->lines[chunk->count] = line;
         chunk->count++;
