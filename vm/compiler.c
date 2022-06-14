@@ -45,15 +45,47 @@ typedef struct {
 } Local;
 
 typedef struct {
+  int patch;
+  int depth;
+  int loopScopeDepth;
+} ContinuePatch;
+
+typedef struct {
   Local locals[UINT8_COUNT];
   int localCount;
   int scopeDepth;
+  ContinuePatch continuePatch[UINT8_COUNT];
+  int continuePatchCount;
 } Compiler;
 
 Parser parser;
 Compiler* current = NULL;
 Chunk* compilingChunk;
 Table globalVarNameConstIndexMap;
+
+/**
+ * on implementation of 'continue' statement
+ * 
+ * After introducing 'continue', dynamically popping the same number as the total local 
+ * variables as in a block statically no longer works, since 'continue' can short-circuit 
+ * any var declartion comes later. On the whole, popping becomes a dynamic thing:
+ * 
+ * 1. remove 'emitByte(OP_POP);' in endScope()
+ * 2. add OP_BLOCK_ENTER and OP_BLOCK_EXIT
+ * 3. log the stack top upon entering OP_BLOCK_ENTER
+ * 4. pop until the logged stack top upon executing OP_BLOCK_EXIT
+ * 5. make 'continue' jump to the corresponding 'while' or 'for' block end,
+ *    thus you have to patchJump during the corresponding endScope()
+ */
+// most recent enclosing 'while' or 'for' loop scope depth
+int loopScopeDepth = -1;
+
+static void expression();
+static void statement();
+static void declaration();
+static ParseRule* getRule(TokenType type);
+static void parsePrecedence(Precedence precedence);
+static void patchJump(int offset);
 
 static Chunk* currentChunk() {
   return compilingChunk;
@@ -155,24 +187,28 @@ static void endCompiler() {
 
 static void beginScope() {
   current->scopeDepth++;
+  emitByte(OP_BLOCK_ENTER);
 }
 
 static void endScope() {
-  current->scopeDepth--;
+  while (current->continuePatchCount > 0 &&
+         current->continuePatch[current->continuePatchCount-1].loopScopeDepth ==
+            current->scopeDepth) {
+    ContinuePatch* p = &current->continuePatch[current->continuePatchCount-1];
+    patchJump(p->patch);
 
+    current->continuePatchCount--;
+  }
+  
+  current->scopeDepth--;
   while (current->localCount > 0 &&
          current->locals[current->localCount - 1].depth >
             current->scopeDepth) {
-    emitByte(OP_POP);
     current->localCount--;
   }
-}
 
-static void expression();
-static void statement();
-static void declaration();
-static ParseRule* getRule(TokenType type);
-static void parsePrecedence(Precedence precedence);
+  emitByte(OP_BLOCK_EXIT);
+}
 
 static void binary(bool canAssign) {
   TokenType operatorType = parser.previous.type;
@@ -237,6 +273,7 @@ static void patchJump(int offset) {
 static void initCompiler(Compiler* compiler) {
   compiler->localCount = 0;
   compiler->scopeDepth = 0;
+  compiler->continuePatchCount = 0;
   current = compiler;
 }
 
@@ -495,7 +532,6 @@ static void expressionStatement() {
 static void forStatement() {
   beginScope();
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
-  consume(TOKEN_SEMICOLON, "Expect ';'.");
   if (match(TOKEN_SEMICOLON)) {
     // No initializer.
   } else if (match(TOKEN_VAR)) {
@@ -563,6 +599,7 @@ static void printStatement() {
 
 static void whileStatement() {
   int loopStart = currentChunk()->count;
+
   consume(TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
   expression();
   consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
@@ -574,6 +611,28 @@ static void whileStatement() {
 
   patchJump(exitJump);
   emitByte(OP_POP);
+}
+
+static void addContinuePatch(int patch) {
+  if (current->continuePatchCount == UINT8_COUNT) {
+    error("Too many patch local variables in function.");
+    return;
+  }
+
+  ContinuePatch* local = &current->continuePatch[current->continuePatchCount++];
+  local->depth = current->scopeDepth;
+  local->patch = patch;
+  local->loopScopeDepth = loopScopeDepth;
+}
+
+static void continueStatement() {
+  if (-1 == loopScopeDepth) {
+    error("continue statement not enclosed in loop");
+  }
+  consume(TOKEN_SEMICOLON, "Expect ';' after value.");
+
+  int blockEnd = emitJump(OP_JUMP);
+  addContinuePatch(blockEnd);
 }
 
 static void synchronize() {
@@ -614,15 +673,24 @@ static void statement() {
   if (match(TOKEN_PRINT)) {
     printStatement();
   } else if (match(TOKEN_FOR)) {
+    int old = loopScopeDepth;
+    // the actual 'for {' block brace scopeDepth is larger by '2'
+    loopScopeDepth = current->scopeDepth + 2;
     forStatement();
+    loopScopeDepth = old;
   } else if (match(TOKEN_IF)) {
     ifStatement();
   } else if (match(TOKEN_WHILE)) {
+    int old = loopScopeDepth;
+    loopScopeDepth = current->scopeDepth + 1;
     whileStatement();
+    loopScopeDepth = old;
   } else if (match(TOKEN_LEFT_BRACE)) {
     beginScope();
     block();
     endScope();
+  } else if (match(TOKEN_CONTINUE)) {
+    continueStatement();
   } else {
     expressionStatement();
   }

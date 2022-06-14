@@ -14,6 +14,7 @@ VM vm;
 
 static void resetStack() {
   vm.stackTop = vm.stack;
+  vm.manageStackTop = vm.manageStack;
 }
 
 static void runtimeError(const char* format, ...) {
@@ -64,6 +65,26 @@ Value pop() {
 
 static Value peek(int distance) {
   return vm.stackTop[-1 - distance];
+}
+
+void pushLocalVar(Value* value) {
+  int diff = vm.manageStackTop - vm.manageStack;
+  if (diff >= STACK_MAX) {
+    printf("**** var stack overflow ****\n");
+    exit(1);
+  }
+  *vm.manageStackTop = value;
+  vm.manageStackTop++;
+}
+
+Value* popLocalVar() {
+  vm.manageStackTop--;
+  int diff = vm.manageStackTop - vm.manageStack;
+  if (diff < 0) {
+    printf("**** var stack underflow ****\n");
+    exit(1);
+  }
+  return *vm.manageStackTop;
 }
 
 static bool isFalsey(Value value) {
@@ -225,6 +246,18 @@ static InterpretResult run() {
       case OP_LOOP: {
         uint16_t offset = READ_SHORT();
         vm.ip -= offset;
+        break;
+      }
+      case OP_BLOCK_ENTER: {
+        pushLocalVar(vm.stackTop);
+        break;
+      }
+      case OP_BLOCK_EXIT: {
+        Value* originalTop = popLocalVar();
+        while (vm.stackTop > originalTop)
+        {
+          pop();
+        }
         break;
       }
       case OP_RETURN: {

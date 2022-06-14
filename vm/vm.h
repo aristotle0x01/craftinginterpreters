@@ -12,6 +12,9 @@ typedef struct {
   uint8_t* ip;
   Value stack[STACK_MAX];
   Value* stackTop;
+  // manage stack for block
+  Value* manageStack[STACK_MAX];
+  Value** manageStackTop;
   Table globals;
   Table strings;
   Obj* objects;
