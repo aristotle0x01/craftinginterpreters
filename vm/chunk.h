@@ -29,6 +29,7 @@ typedef enum {
   OP_SUBTRACT,
   OP_MULTIPLY,
   OP_DIVIDE,
+  OP_CALL,
   OP_RETURN,
   OP_BLOCK_ENTER,
   OP_BLOCK_EXIT,
