@@ -49,7 +49,7 @@ typedef struct {
   NativeFn function;
 } ObjNative;
 
-struct ObjString {
+struct ObjString{
   Obj obj;
   int length;
   char* chars;

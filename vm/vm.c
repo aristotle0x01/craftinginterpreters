@@ -56,12 +56,12 @@ static void defineNative(const char* name, NativeFn function) {
 }
 
 void initVM() {
-    resetStack();
-    vm.objects = NULL;
-    initTable(&vm.globals);
-    initTable(&vm.strings);
+  resetStack();
+  vm.objects = NULL;
+  initTable(&vm.globals);
+  initTable(&vm.strings);
 
-    defineNative("clock", clockNative);
+  defineNative("clock", clockNative);
 }
 
 void freeVM() {
@@ -246,13 +246,6 @@ static InterpretResult run() {
       case OP_CONSTANT: {
         Value constant = READ_CONSTANT();
         push(constant);
-        break;
-      }
-      case OP_CONSTANT_LONG: {
-        // Value constant = READ_CONSTANT(OP_CONSTANT_LONG);
-        // printf("OP_CONSTANT_LONG: %lf\n", AS_NUMBER(constant));
-        // push(constant);
-        runtimeError("OP_CONSTANT_LONG");
         break;
       }
       case OP_NIL: push(NIL_VAL); break;
