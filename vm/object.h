@@ -1,8 +1,6 @@
 #ifndef clox_object_h
 #define clox_object_h
 
-// #define FLEXIBLE_ARRAY_MEMBER
-
 #include <stdio.h>
 
 #include "common.h"
@@ -51,21 +49,12 @@ typedef struct {
   NativeFn function;
 } ObjNative;
 
-#ifdef FLEXIBLE_ARRAY_MEMBER
-    struct ObjString {
-        Obj obj;
-        int length;
-        uint32_t hash;
-        char chars[];
-    };
-#else
-    struct ObjString {
-        Obj obj;
-        int length;
-        char* chars;
-        uint32_t hash;
-    };
-#endif
+struct ObjString {
+  Obj obj;
+  int length;
+  char* chars;
+  uint32_t hash;
+};
 
 typedef struct ObjUpvalue {
   Obj obj;

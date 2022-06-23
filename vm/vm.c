@@ -200,14 +200,7 @@ static void concatenate() {
   memcpy(chars, a->chars, a->length);
   memcpy(chars + a->length, b->chars, b->length);
   chars[length] = '\0';
-
-#ifdef FLEXIBLE_ARRAY_MEMBER
-  ObjString* result = copyString(chars, length);
-  FREE(char, chars);
-#else
   ObjString* result = takeString(chars, length);
-#endif
-  
   push(OBJ_VAL(result));
 }
 
