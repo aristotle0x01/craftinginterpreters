@@ -365,8 +365,7 @@ static InterpretResult run() {
       }
       case OP_BLOCK_EXIT: {
         Value* originalTop = popLocalVar();
-        while (vm.stackTop > originalTop)
-        {
+        while (vm.stackTop > originalTop){
           pop();
         }
         break;
