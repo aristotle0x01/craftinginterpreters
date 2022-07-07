@@ -620,6 +620,10 @@ ParseRule rules[] = {
 
 static void parsePrecedence(Precedence precedence) {
   advance();
+  /**
+   * why using parser.previous, advance() already called before compiling 
+   * and prefixRule won't be null, since parsePrecedence only called inside expression
+   */
   ParseFn prefixRule = getRule(parser.previous.type)->prefix;
   if (prefixRule == NULL) {
     error("Expect expression.");
