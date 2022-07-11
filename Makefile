@@ -3,7 +3,7 @@ TOOL_SOURCES := tool/pubspec.lock $(shell find tool -name '*.dart')
 BUILD_SNAPSHOT := $(BUILD_DIR)/build.dart.snapshot
 TEST_SNAPSHOT := $(BUILD_DIR)/test.dart.snapshot
 
-default: book clox jlox
+default: clox jlox
 
 # Run dart pub get on tool directory.
 get:
@@ -13,14 +13,6 @@ get:
 clean:
 	@ rm -rf $(BUILD_DIR)
 	@ rm -rf gen
-
-# Build the site.
-book: $(BUILD_SNAPSHOT)
-	@ dart $(BUILD_SNAPSHOT)
-
-# Run a local development server for the site that rebuilds automatically.
-serve: $(BUILD_SNAPSHOT)
-	@ dart $(BUILD_SNAPSHOT) --serve
 
 $(BUILD_SNAPSHOT): $(TOOL_SOURCES)
 	@ mkdir -p build
@@ -202,5 +194,5 @@ compile_snippets:
 xml: $(TOOL_SOURCES)
 	@ dart --enable-asserts tool/bin/build_xml.dart
 
-.PHONY: book c_chapters clean clox compile_snippets debug default diffs \
-	get java_chapters jlox serve split_chapters test test_all test_c test_java
+.PHONY: c_chapters clean clox compile_snippets debug default diffs \
+	get java_chapters jlox split_chapters test test_all test_c test_java

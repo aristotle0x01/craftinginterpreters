@@ -17,7 +17,6 @@ abstract class Expr {
     R visitThisExpr(This expr);
     R visitUnaryExpr(Unary expr);
     R visitVariableExpr(Variable expr);
-    R visitLambdaExpr(Lambda expr);
   }
 
   // Nested Expr classes here...
@@ -213,20 +212,6 @@ abstract class Expr {
     final Token name;
   }
 //< expr-variable
-  static class Lambda extends Expr {
-    Lambda(Token paren, Stmt.Function function) {
-      this.paren = paren;
-      this.function = function;
-    }
-
-    @Override
-    <R> R accept(Visitor<R> visitor) {
-      return visitor.visitLambdaExpr(this);
-    }
-
-    final Token paren;
-    final Stmt.Function function;
-  }
 
   abstract <R> R accept(Visitor<R> visitor);
 }
