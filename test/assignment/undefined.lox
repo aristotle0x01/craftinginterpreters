@@ -1,3 +1,1 @@
-// var unknown = "what"; // expect runtime error: Undefined variable 'unknown'.
-var unknown;
-print unknown;
+unknown = "what"; // expect runtime error: Undefined variable 'unknown'.
