@@ -67,7 +67,7 @@ each chapter.
 for the chapter by chapter accumulating build-up of clox, here it is in folder '/vm':
 
 ```sh
-$ make lox "SNIPPET=true"
+$ make clox "SNIPPET=true"
 ```
 
 ## Testing
