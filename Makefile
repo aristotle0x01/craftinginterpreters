@@ -26,7 +26,7 @@ test: debug jlox $(TEST_SNAPSHOT)
 
 # Run the tests for the final version of clox.
 test_clox: debug $(TEST_SNAPSHOT)
-	@ dart $(TEST_SNAPSHOT) clox
+	dart $(TEST_SNAPSHOT) clox
 
 # Run the tests for the final version of jlox.
 test_jlox: jlox $(TEST_SNAPSHOT)
@@ -39,7 +39,7 @@ test_all: debug jlox compile_snippets $(TEST_SNAPSHOT)
 $(TEST_SNAPSHOT): $(TOOL_SOURCES)
 	@ mkdir -p build
 	@ echo "Compiling Dart snapshot..."
-	@ dart --snapshot=$@ --snapshot-kind=app-jit tool/bin/test.dart clox >/dev/null
+	@ dart --snapshot=$@ --snapshot-kind=app-jit tool/bin/test.dart clox
 
 # Compile a debug build of clox.
 debug:
