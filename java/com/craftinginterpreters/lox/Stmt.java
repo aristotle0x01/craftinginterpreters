@@ -14,6 +14,7 @@ abstract class Stmt {
     R visitReturnStmt(Return stmt);
     R visitVarStmt(Var stmt);
     R visitWhileStmt(While stmt);
+    R visitBreakStmt(Break stmt);
   }
 
   // Nested Stmt classes here...
@@ -67,10 +68,11 @@ abstract class Stmt {
 //< stmt-expression
 //> stmt-function
   static class Function extends Stmt {
-    Function(Token name, List<Token> params, List<Stmt> body) {
+    Function(Token name, List<Token> params, List<Stmt> body, Resolver.FunctionType type) {
       this.name = name;
       this.params = params;
       this.body = body;
+      this.type = type;
     }
 
     @Override
@@ -81,6 +83,7 @@ abstract class Stmt {
     final Token name;
     final List<Token> params;
     final List<Stmt> body;
+    final Resolver.FunctionType type;
   }
 //< stmt-function
 //> stmt-if
@@ -161,6 +164,20 @@ abstract class Stmt {
 
     final Expr condition;
     final Stmt body;
+  }
+//< stmt-while
+//> stmt-while
+  static class Break extends Stmt {
+    Break(Token brk) {
+      this.brk = brk;
+    }
+
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitBreakStmt(this);
+    }
+
+    final Token brk;
   }
 //< stmt-while
 
