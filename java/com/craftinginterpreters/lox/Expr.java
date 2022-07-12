@@ -213,6 +213,7 @@ abstract class Expr {
     final Token name;
   }
 //< expr-variable
+//> expr-lambda
   static class Lambda extends Expr {
     Lambda(Token paren, Stmt.Function function) {
       this.paren = paren;
@@ -227,6 +228,7 @@ abstract class Expr {
     final Token paren;
     final Stmt.Function function;
   }
+//< expr-lambda
 
   abstract <R> R accept(Visitor<R> visitor);
 }

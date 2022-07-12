@@ -44,7 +44,8 @@ public class GenerateAst {
 */
 //> Statements and State var-expr
       "Unary    : Token operator, Expr right",
-      "Variable : Token name"
+      "Variable : Token name",
+      "Lambda   : Token paren, Stmt.Function function"
 //< Statements and State var-expr
     ));
 //> Statements and State stmt-ast
@@ -63,7 +64,7 @@ public class GenerateAst {
       "Expression : Expr expression",
 //> Functions function-ast
       "Function   : Token name, List<Token> params," +
-                  " List<Stmt> body",
+                  " List<Stmt> body, Resolver.FunctionType type",
 //< Functions function-ast
 //> Control Flow if-ast
       "If         : Expr condition, Stmt thenBranch," +
@@ -83,7 +84,8 @@ public class GenerateAst {
 */
 //> Control Flow while-ast
       "Var        : Token name, Expr initializer",
-      "While      : Expr condition, Stmt body"
+      "While      : Expr condition, Stmt body",
+      "Break      : Token brk"
 //< Control Flow while-ast
     ));
 //< Statements and State stmt-ast

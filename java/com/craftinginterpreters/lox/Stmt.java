@@ -68,7 +68,10 @@ abstract class Stmt {
 //< stmt-expression
 //> stmt-function
   static class Function extends Stmt {
-    Function(Token name, List<Token> params, List<Stmt> body, Resolver.FunctionType type) {
+    Function(Token name,
+          List<Token> params,
+          List<Stmt> body,
+          Resolver.FunctionType type) {
       this.name = name;
       this.params = params;
       this.body = body;
@@ -166,7 +169,7 @@ abstract class Stmt {
     final Stmt body;
   }
 //< stmt-while
-//> stmt-while
+//> stmt-break
   static class Break extends Stmt {
     Break(Token brk) {
       this.brk = brk;
@@ -179,7 +182,7 @@ abstract class Stmt {
 
     final Token brk;
   }
-//< stmt-while
+//< stmt-break
 
   abstract <R> R accept(Visitor<R> visitor);
 }
