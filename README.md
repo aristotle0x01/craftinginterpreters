@@ -46,22 +46,6 @@ $ make jlox
 This builds the final version of each interpreter as it appears at the end of
 its part in the book.
 
-You can also see what the interpreters look like at the end of each chapter. Run:
-
-```sh
-$ make c_chapters
-```
-
-And in the `build/` directory, you'll get an executable for each chapter, like
-`chap14_chunks`, etc. Likewise:
-
-```sh
-$ make java_chapters
-```
-
-This compiles the Java code to classfiles in `build/gen/` in a subdirectory for
-each chapter.
-
 ### your build up
 
 for the chapter by chapter accumulating build-up of clox, here it is in folder '/vm':
@@ -87,6 +71,12 @@ $ make test_jlox  # The final version of jlox.
 $ make test_c     # Every chapter's version of clox.
 $ make test_java  # Every chapter's version of jlox.
 $ make test_all   # All of the above.
+```
+
+### my way of testing
+```sh
+$ make test_clox --debug  # for c version
+$ dart tool/bin/test.dart clox --interpreter ./clox  # for c or java version
 ```
 
 ### Testing your implementation
