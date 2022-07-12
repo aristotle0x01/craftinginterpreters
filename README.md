@@ -76,7 +76,9 @@ $ make test_all   # All of the above.
 ### my way of testing
 ```sh
 $ make test_clox --debug  # for c version
-$ dart tool/bin/test.dart clox --interpreter ./clox  # for c or java version
+$ dart tool/bin/test.dart clox --interpreter ./clox
+
+$ make test_jlox --debug  # for java version
 ```
 
 ### Testing your implementation
