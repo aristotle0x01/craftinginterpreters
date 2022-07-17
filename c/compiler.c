@@ -239,9 +239,12 @@ static void endScope() {
   while (current->localCount > 0 &&
          current->locals[current->localCount - 1].depth >
             current->scopeDepth) {
-    if (current->locals[current->localCount - 1].isCaptured) {
-      emitByte(OP_CLOSE_UPVALUE);
-    } 
+    // if (current->locals[current->localCount - 1].isCaptured) {
+    //   emitByte(OP_CLOSE_UPVALUE);
+    // } 
+
+    // emitByte(OP_CLOSE_UPVALUE) and the whole OP_CLOSE_UPVALUE is 
+    // no longer needed since emitByte(OP_BLOCK_EXIT) will suffice 
     current->localCount--;
   }
 
