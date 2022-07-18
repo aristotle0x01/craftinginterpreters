@@ -26,8 +26,8 @@ class Environment {
   Object get(Token name) {
     if (values.containsKey(name.lexeme)) {
       if (uninitialized.contains(name.lexeme)){
-        throw new RuntimeError(name,
-                "Uninitialized variable '" + name.lexeme + "'.");
+//        throw new RuntimeError(name,
+//                "Uninitialized variable '" + name.lexeme + "'.");
       }
       return values.get(name.lexeme);
     }

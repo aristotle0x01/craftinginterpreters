@@ -384,8 +384,8 @@ public Void visitBreakStmt(Stmt.Break stmt) {
   private void endScope() {
     scopes.pop();
     for (Token token : perScopeLocallyUnResolved.values()) {
-      Lox.error(token,
-              "Variable is never used in this scope.");
+//      Lox.error(token,
+//              "Variable is never used in this scope.");
     }
     perScopeLocallyUnResolved.clear();
   }
