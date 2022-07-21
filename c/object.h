@@ -50,6 +50,8 @@ typedef struct {
   int arity;
   int upvalueCount;
   Chunk chunk;
+  int codeLength;
+  uint8_t* ip;
   ObjString* name;
 } ObjFunction;
 

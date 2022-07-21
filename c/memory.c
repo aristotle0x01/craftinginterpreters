@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "compiler.h"
 #include "memory.h"
@@ -11,16 +12,42 @@
 
 #define GC_HEAP_GROW_FACTOR 2
 
+void* copy_reallocate(void* pointer, size_t oldSize, size_t newSize, size_t copyCount) {
+  vm.bytesAllocated += newSize - oldSize;
+
+  if (newSize > oldSize) {
+#ifdef DEBUG_STRESS_GC
+    // collectGarbage();
+#endif
+
+    if (vm.bytesAllocated > vm.nextGC) {
+      // collectGarbage();
+    }
+  }
+
+  if (newSize == 0) {
+    free(pointer);
+    return NULL;
+  }
+
+  void* r = calloc(newSize, 1);
+  if (r == NULL) exit(1);
+  size_t count = copyCount > newSize ? newSize : copyCount;
+  memcpy(r, pointer, count);
+  free(pointer);
+  return r;
+}
+
 void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
   vm.bytesAllocated += newSize - oldSize;
 
   if (newSize > oldSize) {
 #ifdef DEBUG_STRESS_GC
-    collectGarbage();
+    // collectGarbage();
 #endif
 
     if (vm.bytesAllocated > vm.nextGC) {
-      collectGarbage();
+      // collectGarbage();
     }
   }
 
@@ -97,7 +124,7 @@ static void blackenObject(Obj* object) {
     case OBJ_FUNCTION: {
       ObjFunction* function = (ObjFunction*)object;
       markObject((Obj*)function->name);
-      markArray(&function->chunk.constants);
+      markArray(&vm.constants);
       break;
     }
     case OBJ_INSTANCE: {

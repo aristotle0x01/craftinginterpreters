@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "chunk.h"
 #include "memory.h"
@@ -9,13 +10,11 @@ void initChunk(Chunk* chunk) {
   chunk->capacity = 0;
   chunk->code = NULL;
   chunk->lines = NULL;
-  initValueArray(&chunk->constants);
 }
 
 void freeChunk(Chunk* chunk) {
   FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
   FREE_ARRAY(int, chunk->lines, chunk->capacity);
-  freeValueArray(&chunk->constants);
   initChunk(chunk);
 }
 
@@ -23,20 +22,37 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line) {
   if (chunk->capacity < chunk->count + 1) {
     int oldCapacity = chunk->capacity;
     chunk->capacity = GROW_CAPACITY(oldCapacity);
-    chunk->code = GROW_ARRAY(uint8_t, chunk->code,
-        oldCapacity, chunk->capacity);
-    chunk->lines = GROW_ARRAY(int, chunk->lines,
-            oldCapacity, chunk->capacity);
+    chunk->code = COPY_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->capacity, chunk->count);
+    chunk->lines = COPY_ARRAY(int, chunk->lines, oldCapacity, chunk->capacity, chunk->count);
+    // chunk->code = GROW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->capacity);
+    // chunk->lines = GROW_ARRAY(int, chunk->lines, oldCapacity, chunk->capacity);
   }
-
+  
   chunk->code[chunk->count] = byte;
   chunk->lines[chunk->count] = line;
   chunk->count++;
 }
 
-int addConstant(Chunk* chunk, Value value) {
+void copyChunkCode(Chunk* from, Chunk* to) {
+  if (to->capacity < (from->count + to->count + 1)) {
+    int oldCapacity = to->capacity;
+    to->capacity = GROW_CAPACITY(oldCapacity);
+    // to->code = GROW_ARRAY(uint8_t, to->code, oldCapacity, to->capacity);
+    // to->lines = GROW_ARRAY(int, to->lines, oldCapacity, to->capacity);
+    to->code = COPY_ARRAY(uint8_t, to->code, oldCapacity, to->capacity, to->count);
+    to->lines = COPY_ARRAY(int, to->lines, oldCapacity, to->capacity, to->count);
+  }
+
+  for (int i=0; i < from->count; i++) {
+    to->code[to->count] = from->code[i];
+    to->lines[to->count] = from->lines[i];
+    to->count++;
+  }
+}
+
+int addConstant(ValueArray *va, Value value) {
   push(value);
-  writeValueArray(&chunk->constants, value);
+  writeValueArray(va, value);
   pop();
-  return chunk->constants.count - 1;
+  return va->count - 1;
 }

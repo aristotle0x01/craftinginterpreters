@@ -83,6 +83,8 @@ typedef struct ClassCompiler {
 
 Parser parser;
 Compiler* current = NULL;
+Compiler _compiler;
+Compiler* outmost = &_compiler;
 ClassCompiler* currentClass = NULL;
 
 /**
@@ -207,10 +209,11 @@ static void emitReturn() {
 
 static ObjFunction* endCompiler() {
   emitReturn();
+  current->function->codeLength = current->function->chunk.count;
   ObjFunction* function = current->function;
 
 #ifdef DEBUG_PRINT_CODE
-  if (!parser.hadError) {
+  if (!parser.hadError && current == outmost) {
     disassembleChunk(currentChunk(), function->name != NULL
         ? function->name->chars : "<script>");
   }
@@ -322,7 +325,7 @@ static void grouping(bool canAssign) {
 }
 
 static uint8_t makeConstant(Value value) {
-  int constant = addConstant(currentChunk(), value);
+  int constant = addConstant(&vm.constants, value);
   if (constant > UINT8_MAX) {
     error("Too many constants in one chunk.");
     return 0;
@@ -707,12 +710,19 @@ static void function(FunctionType type) {
   consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
   block();
 
+  // 将function视作一种特殊变量定义而已
+  // var f = 1;
+  // fun f() {}
   ObjFunction* function = endCompiler();
   emitBytes(OP_CLOSURE, makeConstant(OBJ_VAL(function)));
   for (int i = 0; i < function->upvalueCount; i++) {
     emitByte(compiler.upvalues[i].isLocal ? 1 : 0);
     emitByte(compiler.upvalues[i].index);
   }
+  // 不能在此处对function->ip进行赋值，因为chunk.code有可能重新分配地址
+  // 所以需在vm.c中case OP_CLOSURE处赋值
+  // function->ip = &current->function->chunk.code[current->function->chunk.count];
+  copyChunkCode(&(function->chunk), &(current->function->chunk));
 }
 
 static void method() {
@@ -993,8 +1003,7 @@ static void statement() {
 
 ObjFunction* compile(const char* source) {
   initScanner(source);
-  Compiler compiler;
-  initCompiler(&compiler, TYPE_SCRIPT);
+  initCompiler(outmost, TYPE_SCRIPT);
 
   parser.hadError = false;
   parser.panicMode = false;

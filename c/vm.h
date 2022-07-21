@@ -18,6 +18,8 @@ typedef struct {
 typedef struct {
   CallFrame frames[FRAMES_MAX];
   int frameCount;
+
+  ValueArray constants;
   
   Value stack[STACK_MAX];
   Value* stackTop;

@@ -14,7 +14,12 @@
 #define FREE_ARRAY(type, pointer, oldCount) \
     reallocate(pointer, sizeof(type) * (oldCount), 0)
 
+#define COPY_ARRAY(type, pointer, oldCount, newCount, copyCount) \
+    (type*)copy_reallocate(pointer, sizeof(type) * (oldCount), \
+        sizeof(type) * (newCount), sizeof(type) * copyCount)
+
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
+void* copy_reallocate(void* pointer, size_t oldSize, size_t newSize, size_t copyCount);
 void markObject(Obj* object);
 void markValue(Value value);
 void collectGarbage();

@@ -12,6 +12,7 @@
 #include "memory.h"
 
 VM vm;
+ObjClosure* topClosure;
 
 static Value clockNative(int argCount, Value* args) {
   return NUMBER_VAL((double)clock() / CLOCKS_PER_SEC);
@@ -71,6 +72,8 @@ void initVM() {
   vm.initString = NULL;
   vm.initString = copyString("init", 4);
 
+  initValueArray(&vm.constants);
+
   defineNative("clock", clockNative);
 }
 
@@ -78,6 +81,7 @@ void freeVM() {
   freeTable(&vm.globals);
   freeTable(&vm.strings);
   vm.initString = NULL;
+  freeValueArray(&vm.constants);
   freeObjects();
 }
 
@@ -127,8 +131,7 @@ Value* popLocalVar() {
 
 static bool call(ObjClosure* closure, int argCount) {
   if (argCount != closure->function->arity) {
-    runtimeError("Expected %d arguments but got %d.",
-        closure->function->arity, argCount);
+    runtimeError("Expected %d arguments but got %d.", closure->function->arity, argCount);
     return false;
   }
 
@@ -136,10 +139,9 @@ static bool call(ObjClosure* closure, int argCount) {
     runtimeError("Stack overflow.");
     return false;
   }
-
   CallFrame* frame = &vm.frames[vm.frameCount++];
   frame->closure = closure;
-  frame->ip = closure->function->chunk.code;
+  frame->ip = closure->function->ip;
   frame->slots = vm.stackTop - argCount - 1;
   return true;
 }
@@ -289,7 +291,7 @@ static InterpretResult run() {
     (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 
 #define READ_CONSTANT() \
-    (frame->closure->function->chunk.constants.values[READ_BYTE()])
+    (vm.constants.values[READ_BYTE()])
 
 #define READ_STRING() AS_STRING(READ_CONSTANT())
 
@@ -313,8 +315,7 @@ static InterpretResult run() {
       printf(" ]");
     }
     printf("\n");
-    disassembleInstruction(&frame->closure->function->chunk,
-        (int)(frame->ip - frame->closure->function->chunk.code));
+    disassembleInstruction(&topClosure->function->chunk, (int)(frame->ip - topClosure->function->chunk.code));
 #endif
     uint8_t instruction;
     switch (instruction = READ_BYTE()) {
@@ -522,6 +523,8 @@ static InterpretResult run() {
             closure->upvalues[i] = frame->closure->upvalues[index];
           }
         }
+        function->ip = frame->ip;
+        frame->ip += function->codeLength;
         break;
       }
       case OP_CLOSE_UPVALUE:
@@ -574,9 +577,11 @@ static InterpretResult run() {
 InterpretResult interpret(const char* source) {
   ObjFunction* function = compile(source);
   if (function == NULL) return INTERPRET_COMPILE_ERROR;
+  function->ip = function->chunk.code;
 
   push(OBJ_VAL(function));
   ObjClosure* closure = newClosure(function);
+  topClosure = closure;
   pop();
   push(OBJ_VAL(closure));
   call(closure, 0);
