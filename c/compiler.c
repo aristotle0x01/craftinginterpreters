@@ -110,8 +110,8 @@ static void declaration();
 static ParseRule* getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
 static void patchJump(int offset);
-static void emitConstant(u_int8_t op, Value value);
-static void emitOpConstant(u_int8_t op, uint16_t index);
+static void emitConstant(uint8_t op, Value value);
+static void emitOpConstant(uint8_t op, uint16_t index);
 static uint16_t identifierConstant(Token* name);
 
 static Chunk* currentChunk() {
@@ -336,18 +336,18 @@ static uint16_t makeConstant(Value value) {
   return (uint16_t)constant;
 }
 
-static void emitOpConstant(u_int8_t op, uint16_t index) {
-  u_int8_t upper = (index >> 8) & 0xff;
-  u_int8_t lower = index & 0xff;
+static void emitOpConstant(uint8_t op, uint16_t index) {
+  uint8_t upper = (index >> 8) & 0xff;
+  uint8_t lower = index & 0xff;
   emitByte(op);
   emitByte(upper);
   emitByte(lower);
 }
 
-static void emitConstant(u_int8_t op, Value value) {
+static void emitConstant(uint8_t op, Value value) {
   uint16_t index = makeConstant(value);
-  u_int8_t upper = (index >> 8) & 0xff;
-  u_int8_t lower = index & 0xff;
+  uint8_t upper = (index >> 8) & 0xff;
+  uint8_t lower = index & 0xff;
   emitByte(op);
   emitByte(upper);
   emitByte(lower);
