@@ -11,14 +11,14 @@
 #include "debug.h"
 #endif
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Token current;
   Token previous;
   bool hadError;
   bool panicMode;
 } Parser;
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
   PREC_NONE,
   PREC_ASSIGNMENT,  // =
   PREC_OR,          // or
@@ -34,37 +34,37 @@ typedef enum {
 
 typedef void (*ParseFn)(bool canAssign);
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   ParseFn prefix;
   ParseFn infix;
   Precedence precedence;
 } ParseRule;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Token name;
   int depth;
   bool isCaptured;
 } Local;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   uint8_t index;
   bool isLocal;
 } Upvalue;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   int patch;
   int depth;
   int loopScopeDepth;
 } ContinuePatch;
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
   TYPE_INITIALIZER,
   TYPE_METHOD,
   TYPE_FUNCTION,
   TYPE_SCRIPT
 } FunctionType;
 
-typedef struct Compiler {
+typedef struct __attribute__((__packed__)) Compiler {
   struct Compiler* enclosing;
   ObjFunction* function;
   FunctionType type;
@@ -76,7 +76,7 @@ typedef struct Compiler {
   int continuePatchCount;
 } Compiler;
 
-typedef struct ClassCompiler {
+typedef struct __attribute__((__packed__)) ClassCompiler {
   struct ClassCompiler* enclosing;
   bool hasSuperclass;
 } ClassCompiler;
@@ -213,7 +213,8 @@ static ObjFunction* endCompiler() {
   ObjFunction* function = current->function;
 
 #ifdef DEBUG_PRINT_CODE
-  if (!parser.hadError && current == outmost) {
+  // if (!parser.hadError && current == outmost) {
+  if (!parser.hadError) {
     disassembleChunk(currentChunk(), function->name != NULL
         ? function->name->chars : "<script>");
   }

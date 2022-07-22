@@ -28,7 +28,7 @@
 #define AS_STRING(value)       ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)      (((ObjString*)AS_OBJ(value))->chars)
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
   OBJ_BOUND_METHOD,
   OBJ_CLASS,
   OBJ_CLOSURE,
@@ -39,13 +39,13 @@ typedef enum {
   OBJ_UPVALUE
 } ObjType;
 
-struct Obj {
+struct __attribute__((__packed__)) Obj {
   ObjType type;
   bool isMarked;
   struct Obj* next;
 };
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   int arity;
   int upvalueCount;
@@ -57,45 +57,45 @@ typedef struct {
 
 typedef Value (*NativeFn)(int argCount, Value* args);
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   NativeFn function;
 } ObjNative;
 
-struct ObjString{
+struct __attribute__((__packed__)) ObjString{
   Obj obj;
   int length;
   char* chars;
   uint32_t hash;
 };
 
-typedef struct ObjUpvalue {
+typedef struct __attribute__((__packed__)) ObjUpvalue {
   Obj obj;
   Value* location;
   Value closed;
   struct ObjUpvalue* next;
 } ObjUpvalue;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   ObjFunction* function;
   ObjUpvalue** upvalues;
   int upvalueCount;
 } ObjClosure;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   ObjString* name;
   Table methods;
 } ObjClass;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   ObjClass* klass;
   Table fields; 
 } ObjInstance;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   Obj obj;
   Value receiver;
   ObjClosure* method;

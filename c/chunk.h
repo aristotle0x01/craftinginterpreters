@@ -4,7 +4,8 @@
 #include "common.h"
 #include "value.h"
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
+  OP_NOPE,
   OP_CONSTANT,
   OP_NOT,
   OP_NEGATE,
@@ -46,7 +47,7 @@ typedef enum {
   OP_METHOD
 } OpCode;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   int count;
   int capacity;
   uint8_t* code;

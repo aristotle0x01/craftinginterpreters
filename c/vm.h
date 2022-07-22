@@ -9,13 +9,13 @@
 #define FRAMES_MAX 64
 #define STACK_MAX (FRAMES_MAX * UINT8_COUNT)
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   ObjClosure* closure;
   uint8_t* ip;
   Value* slots;
 } CallFrame;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   CallFrame frames[FRAMES_MAX];
   int frameCount;
 
@@ -38,7 +38,7 @@ typedef struct {
   Obj** grayStack;
 } VM;
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
   INTERPRET_OK,
   INTERPRET_COMPILE_ERROR,
   INTERPRET_RUNTIME_ERROR

@@ -4,12 +4,12 @@
 #include "common.h"
 #include "value.h"
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   ObjString* key;
   Value value;
 } Entry;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   int count;
   int capacity;
   Entry* entries;

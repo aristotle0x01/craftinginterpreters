@@ -6,14 +6,14 @@
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 
-typedef enum {
+typedef enum __attribute__((__packed__)){
   VAL_BOOL,
   VAL_NIL, 
   VAL_NUMBER,
   VAL_OBJ
 } ValueType;
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   ValueType type;
   union {
     bool boolean;
@@ -36,7 +36,7 @@ typedef struct {
 #define NUMBER_VAL(value) ((Value){VAL_NUMBER, {.number = value}})
 #define OBJ_VAL(object)   ((Value){VAL_OBJ, {.obj = (Obj*)object}})
 
-typedef struct {
+typedef struct __attribute__((__packed__)){
   int capacity;
   int count;
   Value* values;
