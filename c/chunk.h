@@ -5,7 +5,6 @@
 #include "value.h"
 
 typedef enum __attribute__((__packed__)){
-  OP_NOPE,
   OP_CONSTANT,
   OP_NOT,
   OP_NEGATE,

@@ -217,8 +217,7 @@ static ObjFunction* endCompiler() {
 #ifdef DEBUG_PRINT_CODE
   // if (!parser.hadError && current == outmost) {
   if (!parser.hadError) {
-    disassembleChunk(currentChunk(), function->name != NULL
-        ? function->name->chars : "<script>");
+    disassembleChunk(currentChunk(), function->name != NULL ? function->name->chars : "<script>");
   }
 #endif
 
@@ -733,6 +732,7 @@ static void function(FunctionType type) {
   consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
   consume(TOKEN_LEFT_BRACE, "Expect '{' before function body.");
   block();
+  endScope();
 
   // 将function视作一种特殊变量定义而已
   // var f = 1;
