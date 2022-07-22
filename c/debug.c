@@ -32,20 +32,22 @@ static int jumpInstruction(const char* name, int sign, Chunk* chunk, int offset)
 }
 
 static int constantInstruction(const char* name, Chunk* chunk, int offset) {
-  uint8_t constant = chunk->code[offset + 1];
-  printf("%-16s %4d '", name, constant);
-  printValue(vm.constants.values[constant]);
-  printf("'\n");
-  return offset + 2;
-}
-
-static int invokeInstruction(const char* name, Chunk* chunk, int offset) {
-  uint8_t constant = chunk->code[offset + 1];
-  uint8_t argCount = chunk->code[offset + 2];
-  printf("%-16s (%d args) %4d '", name, argCount, constant);
+  uint16_t constant = (uint16_t)(chunk->code[offset + 1] << 8);
+  constant |= chunk->code[offset + 2];
+  printf("%-16s %6d '", name, constant);
   printValue(vm.constants.values[constant]);
   printf("'\n");
   return offset + 3;
+}
+
+static int invokeInstruction(const char* name, Chunk* chunk, int offset) {
+  uint16_t constant = (uint16_t)(chunk->code[offset + 1] << 8);
+  constant |= chunk->code[offset + 2];
+  uint8_t argCount = chunk->code[offset + 3];
+  printf("%-16s (%d args) %6d '", name, argCount, constant);
+  printValue(vm.constants.values[constant]);
+  printf("'\n");
+  return offset + 4;
 }
 
 int disassembleInstruction(Chunk* chunk, int offset) {
@@ -118,8 +120,9 @@ int disassembleInstruction(Chunk* chunk, int offset) {
       return invokeInstruction("OP_INVOKE", chunk, offset);
     case OP_CLOSURE: {
       offset++;
-      uint8_t constant = chunk->code[offset++];
-      printf("%-16s %4d ", "OP_CLOSURE", constant);
+      uint16_t constant = (uint16_t)(chunk->code[offset++] << 8);
+      constant |= chunk->code[offset++];
+      printf("%-16s %6d ", "OP_CLOSURE", constant);
       printValue(vm.constants.values[constant]);
       printf("\n");
 

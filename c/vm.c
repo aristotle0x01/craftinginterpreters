@@ -291,7 +291,7 @@ static InterpretResult run() {
     (uint16_t)((frame->ip[-2] << 8) | frame->ip[-1]))
 
 #define READ_CONSTANT() \
-    (vm.constants.values[READ_BYTE()])
+    (vm.constants.values[READ_SHORT()])
 
 #define READ_STRING() AS_STRING(READ_CONSTANT())
 
