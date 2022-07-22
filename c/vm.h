@@ -38,7 +38,7 @@ typedef struct __attribute__((__packed__)){
   Obj** grayStack;
 } VM;
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   INTERPRET_OK,
   INTERPRET_COMPILE_ERROR,
   INTERPRET_RUNTIME_ERROR

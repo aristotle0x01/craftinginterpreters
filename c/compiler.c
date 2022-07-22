@@ -18,7 +18,7 @@ typedef struct __attribute__((__packed__)){
   bool panicMode;
 } Parser;
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   PREC_NONE,
   PREC_ASSIGNMENT,  // =
   PREC_OR,          // or
@@ -57,7 +57,7 @@ typedef struct __attribute__((__packed__)){
   int loopScopeDepth;
 } ContinuePatch;
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   TYPE_INITIALIZER,
   TYPE_METHOD,
   TYPE_FUNCTION,

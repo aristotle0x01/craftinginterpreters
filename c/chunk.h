@@ -4,7 +4,7 @@
 #include "common.h"
 #include "value.h"
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   OP_CONSTANT,
   OP_NOT,
   OP_NEGATE,

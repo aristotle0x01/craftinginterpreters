@@ -40,9 +40,12 @@ ObjClass* newClass(ObjString* name) {
 }
 
 ObjClosure* newClosure(ObjFunction* function) {
-  ObjUpvalue** upvalues = ALLOCATE(ObjUpvalue*, function->upvalueCount);
-  for (int i = 0; i < function->upvalueCount; i++) {
-    upvalues[i] = NULL;
+  ObjUpvalue** upvalues = NULL;
+  if (function->upvalueCount > 0) {
+    upvalues = ALLOCATE(ObjUpvalue*, function->upvalueCount);
+    for (int i = 0; i < function->upvalueCount; i++) {
+      upvalues[i] = NULL;
+    }
   }
 
   ObjClosure* closure = ALLOCATE_OBJ(ObjClosure, OBJ_CLOSURE);

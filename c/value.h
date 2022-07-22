@@ -6,7 +6,7 @@
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   VAL_BOOL,
   VAL_NIL, 
   VAL_NUMBER,

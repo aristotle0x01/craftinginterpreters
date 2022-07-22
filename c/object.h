@@ -28,7 +28,7 @@
 #define AS_STRING(value)       ((ObjString*)AS_OBJ(value))
 #define AS_CSTRING(value)      (((ObjString*)AS_OBJ(value))->chars)
 
-typedef enum __attribute__((__packed__)){
+typedef enum {
   OBJ_BOUND_METHOD,
   OBJ_CLASS,
   OBJ_CLOSURE,
