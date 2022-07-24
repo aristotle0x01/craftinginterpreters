@@ -81,6 +81,9 @@ $ dart tool/bin/test.dart clox --interpreter ./clox
 $ make test_jlox --debug  # for java version
 ```
 
+## bytecode
+the bytecode branch can dump byte code and then interpret from dump file
+
 ## Repository Layout
 
 *   `asset/` – Sass files and jinja2 templates used to generate the site.
