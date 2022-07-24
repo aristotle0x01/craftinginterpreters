@@ -16,23 +16,24 @@ typedef struct __attribute__((__packed__)){
 } CallFrame;
 
 typedef struct __attribute__((__packed__)){
+  ValueArray constants;
+  Table strings;
+
   CallFrame frames[FRAMES_MAX];
   int frameCount;
 
-  ValueArray constants;
-  
   Value stack[STACK_MAX];
   Value* stackTop;
-  // manage stack for block
-  Value* manageStack[STACK_MAX];
+  Value* manageStack[STACK_MAX]; // mark stack for block
   Value** manageStackTop;
+
   Table globals;
-  Table strings;
   ObjString* initString;
   ObjUpvalue* openUpvalues;
+
+  Obj* objects;
   size_t bytesAllocated;
   size_t nextGC;
-  Obj* objects;
   int grayCount;
   int grayCapacity;
   Obj** grayStack;
@@ -49,6 +50,7 @@ extern VM vm;
 void initVM();
 void freeVM();
 InterpretResult interpret(const char* source);
+InterpretResult interpret_dump();
 void push(Value value);
 Value pop();
 

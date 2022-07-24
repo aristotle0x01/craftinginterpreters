@@ -6,6 +6,7 @@
 #include "chunk.h"
 #include "debug.h"
 #include "vm.h"
+#include "bytes.h"
 
 static void repl() {
   char line[1024];
@@ -57,12 +58,33 @@ static void runFile(const char* path) {
   if (result == INTERPRET_RUNTIME_ERROR) exit(70);
 }
 
+static void generateDump(const char* path) {
+  char* source = readFile(path);
+  InterpretResult result = dump(source);
+  free(source); 
+
+  if (result == INTERPRET_COMPILE_ERROR) exit(65);
+  if (result == INTERPRET_RUNTIME_ERROR) exit(71);
+}
+
+static void runFromDump() {
+  interpret_dump();
+}
+
 int main(int argc, const char* argv[]) {
   initVM();
   if (argc == 1) {
     repl();
   } else if (argc == 2) {
-    runFile(argv[1]);
+    if (0 == strncmp(argv[1], "run", 3)){
+      printf("interpret from dump:\n");
+      runFromDump();
+    } else {
+      runFile(argv[1]);
+    }
+  } else if (argc == 3) {
+    printf("generate dump\n");
+    generateDump(argv[1]);
   } else {
     fprintf(stderr, "Usage: lox [path]\n");
     exit(64);

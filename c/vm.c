@@ -10,6 +10,7 @@
 #include "debug.h"
 #include "object.h"
 #include "memory.h"
+#include "bytes.h"
 
 VM vm;
 ObjClosure* topClosure;
@@ -577,6 +578,21 @@ static InterpretResult run() {
 InterpretResult interpret(const char* source) {
   ObjFunction* function = compile(source);
   if (function == NULL) return INTERPRET_COMPILE_ERROR;
+  function->ip = function->chunk.code;
+
+  push(OBJ_VAL(function));
+  ObjClosure* closure = newClosure(function);
+  topClosure = closure;
+  pop();
+  push(OBJ_VAL(closure));
+  call(closure, 0);
+
+  return run();
+}
+
+InterpretResult interpret_dump() {
+  ObjFunction* function = newFunction();
+  from_dump(function);
   function->ip = function->chunk.code;
 
   push(OBJ_VAL(function));
